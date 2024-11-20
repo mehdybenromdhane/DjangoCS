@@ -25,6 +25,22 @@ class nbr_ParticipantFilter(admin.SimpleListFilter):
         if self.value()=="Yes":
             return queryset.filter(nbr_participant__gt=0)
 
+
+
+def refuse_state(ModelAdmin,request,queryset):
+    queryset.update(state=False)
+
+
+def accept_state(ModelAdmin,request,queryset):
+    queryset.update(state=True)
+
+
+class ParticipationInline(admin.TabularInline):
+    model= Participation
+    extra=5
+    readonly_fields=('participation_date',)
+
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display =('title','nbr_participant','description','state','evt_date','category','organisateur')
@@ -32,6 +48,21 @@ class EventAdmin(admin.ModelAdmin):
     list_filter=['category',nbr_ParticipantFilter]
     search_fields=['title','category']
     
+    actions=[accept_state,refuse_state]
     autocomplete_fields=['organisateur']
+    
+    inlines=[ParticipationInline]
+    
+    
+    fieldsets = (
+    ('A propos', {"fields": ('title','description','image'),}),
+    ('Date',{"fields":('evt_date',) }),
+    ('Others',{"fields":('category','state','nbr_participant') }),
+    ('Personal',{"fields":('organisateur',) })
+    )
+    
+    
+    
+    
     
 admin.site.register(Participation)

@@ -1,0 +1,27 @@
+
+{% extends 'index.html' %}
+
+
+{% block content %}
+
+
+
+
+
+
+
+<div class="d-flex p-5 gap-4">
+    {%  for e in list  %}
+    
+    <div class="card" style="width: 18rem;">
+        <img src="{{e.image.url}}" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">{{e.title}}</h5>
+          <p class="card-text">{{e.description}}</p>
+          <a href="{% url 'details' e.id %}" class="btn btn-primary">see details</a>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+
+{% endblock %}
