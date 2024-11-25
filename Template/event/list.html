@@ -20,8 +20,13 @@
           <p class="card-text">{{e.description}}</p>
 
           <p class="card-text">{{e.evt_date}}</p>
+          <p class="card-text">Number of participants :{{e.nbr_participant}}</p>
 
           <a href="{% url 'details' e.id %}" class="btn btn-primary">see details</a>
+        
+          <a href="{% url 'participer' e.id %}" class="btn btn-info"> Participer</a>
+          <a href="{% url 'cancel' e.id %}" class="btn btn-danger"> Cancel</a>
+
         </div>
       </div>
     {% endfor %}

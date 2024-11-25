@@ -1,9 +1,11 @@
 from django.shortcuts import render,redirect
 
 from .forms import EventForm
-from django.views.generic import ListView,DetailView,CreateView
+from django.views.generic import ListView,DetailView,CreateView,DeleteView,UpdateView
 # Create your views here.
-from .models import Event
+from .models import Event,Participation
+
+from Person.models import Person
 
 def hello(request,name):
     
@@ -15,9 +17,9 @@ def hello(request,name):
 
 def listEvent(request):
     
-#    eventList= Event.objects.all()
+   eventList= Event.objects.all()
    
-   eventList= Event.objects.filter(state=True)
+#    eventList= Event.objects.filter(state=True)
 
    return render(request,"event/list.html",{"events":eventList}) 
 
@@ -28,7 +30,7 @@ class DisplayEvents(ListView):
     
     def get_queryset(self):
         # eventList= Event.objects.filter(state=True).order_by('-evt_date')
-        eventList= Event.objects.filter(state=True)
+        eventList= Event.objects.all()
 
         return eventList
 
@@ -71,3 +73,59 @@ class AddEventClass(CreateView):
     template_name="event/add.html"
     form_class = EventForm
     success_url= "/list"
+    
+    
+    
+    
+class Delete(DeleteView):
+    model=Event
+    template_name="event/delete.html"
+    success_url="/event/list"
+    
+    
+
+
+class UpdateEvent(UpdateView):
+    
+    model=Event
+    form_class=EventForm
+    template_name="event/update.html"
+    success_url= "/event/list/"
+    
+
+def deleteEvent(request,idEvent):
+  e1=  Event.objects.get(id=idEvent)
+  if e1:
+      e1.delete()
+      return redirect("list")
+  
+  
+  
+
+def participer(request,ide):
+    
+    e1 = Event.objects.get(id=ide)
+    p1 = Person.objects.get(cin=12345888)
+    
+    participant = Participation.objects.create(person=p1, event=e1)
+    
+    if participant:
+            participant.save()
+            e1.nbr_participant+=1
+            e1.save()
+            return redirect("list")
+        
+  
+  
+def cancel(request,ide):
+    
+    e1 = Event.objects.get(id=ide)
+    p1 = Person.objects.get(cin=12345888)
+    
+    participant = Participation.objects.filter(person=p1, event=e1)
+    
+    if participant:
+            participant.delete()
+            e1.nbr_participant-=1
+            e1.save()
+            return redirect("list")
