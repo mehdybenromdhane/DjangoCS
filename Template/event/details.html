@@ -20,7 +20,12 @@
       <a href="{% url 'deleteEvent' event.id %}   " class="btn btn-danger">Delete with class</a>
    
       <a href="{% url 'updateEvent' event.id %} " class="btn btn-warning">Update </a>
-   
+      
+      
+      <div class="my-5">
+      <a href="{% url 'participer' event.id %}" class="btn btn-info {% if button %} disabled {% else %}   {% endif %}"> Participer</a>
+      <a href="{% url 'cancel' event.id %}" class="btn btn-danger {% if button %}  {% else %}  disabled {% endif %}"> Cancel</a>
+    </div>
     </div>
   </div>
 </div>

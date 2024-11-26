@@ -19,6 +19,9 @@ def listEvent(request):
     
    eventList= Event.objects.all()
    
+   
+   
+   
 #    eventList= Event.objects.filter(state=True)
 
    return render(request,"event/list.html",{"events":eventList}) 
@@ -43,8 +46,23 @@ def detailsEvent(request,ide):
     
     event = Event.objects.get(id=ide)
     
+    person = Person.objects.get(cin=12345888)
+    button=False
     
-    return render(request,"event/details.html",{"event":event}) 
+    participants= Participation.objects.filter(event=event,person=person)
+    
+    if participants:
+        button=True
+    else:
+        button=False
+        
+        
+    context={
+        "event":event,
+        "button":button
+    }
+    
+    return render(request,"event/details.html",context) 
 
 
 
