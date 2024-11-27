@@ -4,7 +4,9 @@ from .forms import EventForm
 from django.views.generic import ListView,DetailView,CreateView,DeleteView,UpdateView
 # Create your views here.
 from .models import Event,Participation
+from django.contrib.auth.mixins import LoginRequiredMixin
 
+from django.contrib.auth.decorators import login_required
 from Person.models import Person
 
 def hello(request,name):
@@ -46,7 +48,7 @@ def detailsEvent(request,ide):
     
     event = Event.objects.get(id=ide)
     
-    person = Person.objects.get(cin=12345888)
+    person = request.user
     button=False
     
     participants= Participation.objects.filter(event=event,person=person)
@@ -65,7 +67,7 @@ def detailsEvent(request,ide):
     return render(request,"event/details.html",context) 
 
 
-
+@login_required
 def addEvent(request):
     form = EventForm()
     
@@ -74,6 +76,7 @@ def addEvent(request):
         form = EventForm(request.POST, request.FILES)
         
         if form.is_valid():
+            form.instance.organisateur = request.user
             form.save()
         
         return redirect("list")
@@ -85,7 +88,7 @@ def addEvent(request):
 
 
 
-class AddEventClass(CreateView):
+class AddEventClass(LoginRequiredMixin,CreateView):
     
     model=Event
     template_name="event/add.html"
@@ -123,7 +126,7 @@ def deleteEvent(request,idEvent):
 def participer(request,ide):
     
     e1 = Event.objects.get(id=ide)
-    p1 = Person.objects.get(cin=12345888)
+    p1 = request.user
     
     participant = Participation.objects.create(person=p1, event=e1)
     
@@ -138,7 +141,7 @@ def participer(request,ide):
 def cancel(request,ide):
     
     e1 = Event.objects.get(id=ide)
-    p1 = Person.objects.get(cin=12345888)
+    p1 = request.user
     
     participant = Participation.objects.filter(person=p1, event=e1)
     
